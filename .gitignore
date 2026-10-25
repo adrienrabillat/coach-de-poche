@@ -5,3 +5,8 @@ dist
 package-lock.json
 dist2
 *.timestamp-*
+
+# Notes perso et builds
+SYSTEM_PROMPT.md
+dist2/
+vite.config.js.timestamp-*
