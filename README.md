@@ -1,6 +1,6 @@
 # Coach de Poche
 
-Application de suivi d'entraînement et de nutrition, pensée pour le téléphone (installable comme une app).
+Application de suivi d'entraînement et de nutrition, pensée pour le téléphone (ajout à l'écran d'accueil de l'iPhone).
 
 ## Fonctionnalités
 
