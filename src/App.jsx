@@ -4,7 +4,7 @@ import {
   Trophy, Flame, TrendingDown, ArrowRight, Star, Download, Activity,
   Apple, Dumbbell, Target, Award, Zap, Shield
 } from 'lucide-react'
-import { PROGRAM, WEEK, MEALS, CHECKS, MILESTONES, STRENGTH, ACHIEVEMENTS } from './data'
+import { PROGRAM, WEEK, MEALS, CHECKS, MILESTONES, STRENGTH, ACHIEVEMENTS, PROFILE } from './data'
 import { useWeightLog, useDailyChecks, useDailyLog, useWorkoutLog, exportCSV, toISO } from './hooks'
 
 /* ═══════════════════════════════════════════════════════════════
@@ -76,9 +76,9 @@ function HomeTab({ weightLog, checkLog }) {
   const todayStr = toISO()
   const tc = checkLog[todayStr] || {}
   const checked = CHECKS.filter(c => tc[c.k]).length
-  const lastW = weightLog.length > 0 ? weightLog[weightLog.length-1].weight_kg : 86.4
-  const lost = (86.4 - lastW).toFixed(1)
-  const remaining = Math.max(0, lastW - 77).toFixed(1)
+  const lastW = weightLog.length > 0 ? weightLog[weightLog.length-1].weight_kg : PROFILE.start
+  const lost = (PROFILE.start - lastW).toFixed(1)
+  const remaining = Math.max(0, lastW - PROFILE.target).toFixed(1)
 
   const now = new Date()
   const dayOfWeek = now.getDay()
@@ -91,7 +91,7 @@ function HomeTab({ weightLog, checkLog }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ padding: "0 2px" }}>
         <div style={{ fontSize: 13, color: C.textMuted }}>Bonjour</div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: C.text, marginBottom: 14 }}>Ad</div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: C.text, marginBottom: 14 }}>{PROFILE.name}</div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {weekDates.map((d, i) => {
             const isToday = d.toDateString() === now.toDateString()
@@ -110,7 +110,7 @@ function HomeTab({ weightLog, checkLog }) {
       </div>
 
       <div style={{ ...cardPad, display: "flex", alignItems: "center", gap: 16 }}>
-        <CircleProgress value={Math.max(0, 86.4 - lastW)} max={9.4} color={C.green}>
+        <CircleProgress value={Math.max(0, PROFILE.start - lastW)} max={PROFILE.start - PROFILE.target} color={C.green}>
           <span style={{ fontSize: 22, fontWeight: 800, color: C.text }}>{remaining}</span>
           <span style={{ fontSize: 10, color: C.textMuted }}>kg restants</span>
         </CircleProgress>
@@ -420,7 +420,7 @@ function TrackerTab({ weightLog, addWeight, checkLog, toggleCheck, dailyLog, sav
   }
 
   const checked = CHECKS.filter(c => tc[c.k]).length
-  const lastW = weightLog.length > 0 ? weightLog[weightLog.length-1].weight_kg : 86.4
+  const lastW = weightLog.length > 0 ? weightLog[weightLog.length-1].weight_kg : PROFILE.start
 
   const perfectDays = Object.values(checkLog).filter(d => CHECKS.every(c => d[c.k])).length
   const noJunkStreak = (() => {
@@ -432,7 +432,7 @@ function TrackerTab({ weightLog, addWeight, checkLog, toggleCheck, dailyLog, sav
 
   const fmtShort = (iso) => { const [y,m,d] = iso.split("-"); return `${d}/${m}` }
 
-  const ICONS = { first_week: Star, minus_2kg: TrendingDown, streak_14: Shield, milestone_84: Trophy, minus_5kg: Flame, milestone_80: Award, streak_30: Zap, milestone_77: Trophy }
+  const ICONS = { first_week: Star, minus_2kg: TrendingDown, streak_14: Shield, milestone_1: Trophy, minus_5kg: Flame, milestone_3: Award, streak_30: Zap, milestone_final: Trophy }
 
   const achStatus = ACHIEVEMENTS.map(a => {
     let unlocked = false
@@ -538,14 +538,14 @@ function TrackerTab({ weightLog, addWeight, checkLog, toggleCheck, dailyLog, sav
         <div style={{ height: 120, background: C.cardAlt, borderRadius: C.radiusSm, padding: 10, marginBottom: 10, overflow: "hidden" }}>
           {weightLog.length > 1 ? (() => {
             const ws = weightLog.map(w=>w.weight_kg)
-            const min = Math.min(...ws, 77)-1, max = Math.max(...ws)+1, range = max-min
+            const min = Math.min(...ws, PROFILE.target)-1, max = Math.max(...ws)+1, range = max-min
             const h = 95, w = Math.max(200, (weightLog.length-1)*45)
             const pts = weightLog.map((e,i) => ({ x: weightLog.length===1 ? w/2 : i*(w/(weightLog.length-1))+10, y: h-((e.weight_kg-min)/range)*h+5, ...e }))
-            const tgtY = h-((77-min)/range)*h+5
+            const tgtY = h-((PROFILE.target-min)/range)*h+5
             return (
               <svg width="100%" height={h+18} viewBox={`0 0 ${w+20} ${h+18}`} preserveAspectRatio="xMidYMid meet">
                 <line x1={0} y1={tgtY} x2={w+20} y2={tgtY} stroke={C.green} strokeDasharray="3,3" strokeWidth={1} opacity={0.5} />
-                <text x={w+2} y={tgtY-3} fill={C.green} fontSize={8} fontWeight="600">77</text>
+                <text x={w+2} y={tgtY-3} fill={C.green} fontSize={8} fontWeight="600">{PROFILE.target}</text>
                 <polyline fill="none" stroke={C.green} strokeWidth={2} strokeLinejoin="round" points={pts.map(p=>`${p.x},${p.y}`).join(" ")} />
                 {pts.map((p,i) => (
                   <g key={i}>

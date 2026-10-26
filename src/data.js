@@ -2,6 +2,16 @@
    STATIC DATA — Programme, nutrition, achievements
    ═══════════════════════════════════════════════════════════════ */
 
+// Profil : les vraies valeurs viennent des variables d'environnement du déploiement perso,
+// la vitrine utilise ces valeurs fictives.
+const env = import.meta.env
+export const PROFILE = {
+  name: env.VITE_PROFILE_NAME || "Camille",
+  start: Number(env.VITE_START_WEIGHT || 84),
+  target: Number(env.VITE_TARGET_WEIGHT || 76),
+}
+const kg = (fraction) => Math.round(PROFILE.start - (PROFILE.start - PROFILE.target) * fraction)
+
 export const PROGRAM = [
   {
     id: "A", name: "Pecs + Triceps", tag: "PUSH", color: "#d4644a", accent: "#fce8e4",
@@ -95,7 +105,7 @@ export const MEALS = [
     ]
   },
   {
-    id: "cheat", title: "Samedi soir", sub: "Cheat meal — 1 repas libre avec ta copine",
+    id: "cheat", title: "Samedi soir", sub: "Cheat meal — 1 repas libre",
     opts: [
       { n: "Les regles", items: ["Resto ou commande, mange ce que tu veux", "1 repas, pas la journee", "Dimanche on reprend", "Zero culpabilite, c'est dans le plan"], cal: 0, prot: 0 },
     ]
@@ -112,11 +122,11 @@ export const CHECKS = [
 ]
 
 export const MILESTONES = [
-  { w: 84, bf: 18, t: "Fin avril", n: "Le visage s'affine." },
-  { w: 82, bf: 16, t: "Mi-mai", n: "Veines des bras." },
-  { w: 80, bf: 15, t: "Fin juin", n: "Abdos du haut." },
-  { w: 78, bf: 13, t: "Aout", n: "Separations visibles." },
-  { w: 77, bf: 12, t: "Sept/Oct", n: "Objectif. 6-pack." },
+  { w: kg(0.25), bf: 18, t: "Mois 1", n: "Le visage s'affine." },
+  { w: kg(0.45), bf: 16, t: "Mois 2", n: "Veines des bras." },
+  { w: kg(0.65), bf: 15, t: "Mois 3", n: "Abdos du haut." },
+  { w: kg(0.9), bf: 13, t: "Mois 5", n: "Separations visibles." },
+  { w: PROFILE.target, bf: 12, t: "Mois 6", n: "Objectif. 6-pack." },
 ]
 
 export const STRENGTH = [
@@ -129,11 +139,11 @@ export const STRENGTH = [
 
 export const ACHIEVEMENTS = [
   { id: "first_week", title: "Premiere semaine", desc: "7 jours de checklist complete", type: "streak", threshold: 7, color: "#c9956b" },
-  { id: "minus_2kg", title: "-2 kg", desc: "Atteindre 84.4 kg", type: "weight", threshold: 84.4, color: "#6b8e5a" },
+  { id: "minus_2kg", title: "-2 kg", desc: `Atteindre ${PROFILE.start - 2} kg`, type: "weight", threshold: PROFILE.start - 2, color: "#6b8e5a" },
   { id: "streak_14", title: "2 semaines", desc: "14 jours sans junk", type: "nojunk", threshold: 14, color: "#8a9a5b" },
-  { id: "milestone_84", title: "Jalon 84 kg", desc: "Premier jalon atteint", type: "weight", threshold: 84, color: "#c9956b" },
-  { id: "minus_5kg", title: "-5 kg", desc: "Atteindre 81.4 kg", type: "weight", threshold: 81.4, color: "#d4644a" },
-  { id: "milestone_80", title: "Jalon 80 kg", desc: "Les abdos du haut se dessinent", type: "weight", threshold: 80, color: "#3574a5" },
+  { id: "milestone_1", title: `Jalon ${kg(0.25)} kg`, desc: "Premier jalon atteint", type: "weight", threshold: kg(0.25), color: "#c9956b" },
+  { id: "minus_5kg", title: "-5 kg", desc: `Atteindre ${PROFILE.start - 5} kg`, type: "weight", threshold: PROFILE.start - 5, color: "#d4644a" },
+  { id: "milestone_3", title: `Jalon ${kg(0.65)} kg`, desc: "Les abdos du haut se dessinent", type: "weight", threshold: kg(0.65), color: "#3574a5" },
   { id: "streak_30", title: "1 mois clean", desc: "30 jours sans junk", type: "nojunk", threshold: 30, color: "#8a9a5b" },
-  { id: "milestone_77", title: "Objectif final", desc: "77 kg — 12% BF", type: "weight", threshold: 77, color: "#d4af37" },
+  { id: "milestone_final", title: "Objectif final", desc: `${PROFILE.target} kg — 12% BF`, type: "weight", threshold: PROFILE.target, color: "#d4af37" },
 ]

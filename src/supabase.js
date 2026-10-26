@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
+import { demoClient } from './demoClient'
 
-const SUPABASE_URL = 'https://wyjyixzbpkwvqgrkzeia.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5anlpeHpicGt3dnFncmt6ZWlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2NDIyMzYsImV4cCI6MjA4MTIxODIzNn0.zis8ofjFag1JdfptMIB9XejOC9DTbHtSgKymJX3odvM'
+// Vitrine publique : VITE_DEMO_MODE=true, données fictives en mémoire, aucune base.
+export const DEMO_MODE = import.meta.env.VITE_DEMO_MODE === 'true'
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const supabase = DEMO_MODE
+  ? demoClient
+  : createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
